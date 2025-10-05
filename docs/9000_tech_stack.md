@@ -1,128 +1,129 @@
-# 9000: Melora Tech Stack (Cross-Platform Revision)
+# 9000: Melora Tech Stack (Native Android)
 
 ## 1. Introduction
 
-This document outlines a completely revised technology stack for the Melora application. The previous stack was based on the assumption of using a macOS development environment. **Given the constraints of a Linux-based development environment and the requirement to build for iOS, we must switch to a cross-platform framework.**
+This document outlines the definitive technology stack for the Melora application, targeting **Native Android Development**. This approach aligns with the goal of a simplified development process on a Linux machine and avoids external frameworks and servers as requested.
 
-This revised guide details a new stack, compares the relevant options, and provides a realistic setup and deployment guide for building an iOS app from a Linux machine.
+We will use the modern, Google-recommended toolkit for building Android apps.
 
 ## 2. Core Components & Technology Choices
 
-### 2.1. Application Framework
+### 2.1. Core Language & Framework
 
-We need a framework that allows us to write code on Linux but deploy to iOS. This is the most critical choice.
-
-| Option | Pros | Cons | Verdict |
-| :--- | :--- | :--- | :--- |
-| **Flutter (Dart)** | Excellent for building beautiful, high-performance, natively compiled applications for mobile, web, and desktop from a single codebase. Strong tooling on Linux. Backed by Google. | Uses the Dart language, which may be new to you. | **Chosen**. Flutter is the ideal choice. It provides a complete SDK for building and deploying apps, has a fantastic UI toolkit perfect for a Spotify-like interface, and is well-supported on Linux. |
-| **React Native (JS/TS)** | Great for developers with a web background (React). Large community and ecosystem. | Can sometimes have performance issues compared to Flutter. Less of an all-in-one solution. | **Rejected**. While a strong contender, Flutter's all-inclusive nature and UI capabilities give it the edge for this specific project. |
-
-### 2.2. Local Database
-
-To store song metadata locally on the phone.
+This is the foundation of our app.
 
 | Option | Pros | Cons | Verdict |
 | :--- | :--- | :--- | :--- |
-| **Hive** | A very fast, lightweight, and easy-to-use key-value database written in pure Dart. Perfect for simple data storage. | Not a full-fledged SQL database, less suitable for complex queries. | **Chosen**. For storing song metadata, Hive is simple, efficient, and a favorite in the Flutter community. It's perfect for our needs. |
-| **Drift (Moor)** | A reactive persistence library built on SQLite. Powerful, type-safe, and allows for complex SQL queries. | More complex to set up and use than Hive. | **Rejected**. Overkill for this project's requirements. |
+| **Kotlin** | **Modern, concise, and null-safe.** It's Google's officially preferred language for Android development, leading to better support and a more pleasant developer experience. | Slight learning curve if you are coming from a different language family. | **Chosen**. Kotlin is the clear and correct choice for any new Android project. |
+| **Java** | The original language for Android; very mature with a vast amount of legacy code and examples online. | Verbose, lacks modern language features, and is no longer the focus for new Android development. | **Rejected**. Kotlin has superseded Java for modern Android development. |
 
-### 2.3. Web Scraping
+### 2.2. User Interface (UI) Toolkit
 
-To parse web pages to find YouTube links.
-
-| Option | Pros | Cons | Verdict |
-| :--- | :--- | :--- | :--- |
-| **http + html (Dart Packages)** | The standard, recommended combination in the Dart/Flutter ecosystem for making network requests and parsing HTML. | Requires combining two packages. | **Chosen**. This is the standard, idiomatic way to handle this task in Dart. |
-
-### 2.4. YouTube to MP3 Conversion
-
-This is the most critical feature. The goal is to have this functionality self-contained within the app, without needing a separate server running on a computer.
+How we will build the user interface.
 
 | Option | Pros | Cons | Verdict |
 | :--- | :--- | :--- | :--- |
-| **youtube_explode_dart** | A pure Dart library that reverse-engineers YouTube's internal API to get direct stream links for audio. This allows for in-app conversion without an external server. | Can break temporarily when YouTube updates its internal API. The library maintainers usually fix it quickly. | **Chosen**. This is the best solution that meets the "entirely from my phone" requirement. It keeps the entire process within the app. |
-| **Public API** | Use a third-party web service that does the conversion. | Relies on an external service that could shut down, have rate limits, or cost money. | **Rejected**. Less reliable and not self-contained. |
+| **Jetpack Compose** | **Android's modern, declarative UI toolkit.** Drastically simplifies and accelerates UI development. It's built to work seamlessly with Kotlin. | Newer than the traditional View system, so some very complex, niche UI components might not have a native Compose solution yet. | **Chosen**. For building a new, Spotify-like UI, Compose is perfect. It will allow us to build a beautiful, reactive interface quickly. |
+| **Android Views (XML)** | The traditional, imperative UI system. Extremely mature. | Verbose and cumbersome. Requires managing state manually and often leads to more boilerplate code. | **Rejected**. Jetpack Compose is the future and is far better suited for a new project. |
+
+### 2.3. Local Database
+
+To store song metadata on the device.
+
+| Option | Pros | Cons | Verdict |
+| :--- | :--- | :--- | :--- |
+| **Room** | **Part of Android Jetpack, Google's recommended persistence library.** It's a powerful abstraction layer over SQLite that reduces boilerplate and provides compile-time verification of SQL queries. | Requires some initial setup and understanding of annotations. | **Chosen**. Room is the industry standard for modern Android development. It's robust, well-integrated, and reliable. |
+| **SQLite (raw)** | No extra library needed, built into Android. | Requires a massive amount of manual, error-prone boilerplate code for even simple operations. | **Rejected**. Room was created specifically to solve the problems of using raw SQLite. |
+
+### 2.4. Web Scraping & Networking
+
+To find YouTube links and download the web pages.
+
+| Component | Technology | Verdict |
+| :--- | :--- | :--- |
+| **Networking** | **OkHttp** | **Chosen**. A powerful and widely-used industry-standard HTTP client for Kotlin/Java. It's perfect for our web-scraping needs. |
+| **HTML Parsing** | **Jsoup** | **Chosen**. The definitive library for parsing HTML in the Java/Kotlin world. It makes extracting information from web pages simple and reliable. |
+
+### 2.5. YouTube to MP3 Conversion
+
+To extract audio from a YouTube link on the device.
+
+| Option | Pros | Cons | Verdict |
+| :--- | :--- | :--- | :--- |
+| **Bundled Java/Kotlin Library** | **Keeps the entire process on-device and self-contained.** Libraries exist that port the logic of tools like `yt-dlp` to Java/Kotlin. | Can be less stable than a server-side solution, as it depends on reverse-engineering YouTube's API. | **Chosen**. This is the best approach that fits all your requirements. We will use a library like `youtube-dl-android` or a similar alternative. |
 
 ## 3. Summary of Chosen Tech Stack
 
 | Component | Technology |
 | :--- | :--- |
-| **Framework** | Flutter (using Dart language) |
-| **Database** | Hive |
-| **Web Scraping** | `http` + `html` packages |
-| **YT Conversion** | `youtube_explode_dart` package |
-| **State Management** | Flutter BLoC (Recommended for structuring the app) |
+| **Language** | Kotlin |
+| **UI Toolkit** | Jetpack Compose |
+| **Database** | Room Persistence Library |
+| **Networking** | OkHttp |
+| **HTML Parsing** | Jsoup |
+| **YT Conversion** | Bundled Java/Kotlin Library (e.g., `youtube-dl-android`) |
+| **Build Tool** | Gradle |
 
 ---
 
 ## 4. Project Setup and Installation Guide
 
-### CRITICAL: Building for iOS from Linux
+This path is much simpler and is done entirely on your local Linux machine.
 
-It is **not possible** to compile an iOS application directly on a Linux machine. Apple's software (Xcode) is required to create the final app file (`.ipa`), and Xcode only runs on macOS. 
+### Step 1: Prerequisites
 
-**The solution is to use a cloud-based CI/CD (Continuous Integration/Continuous Deployment) service.** You will do all your development and testing on Linux (using an Android emulator or a physical Android device), and then use a cloud service that provides a macOS environment to build the final iOS app.
+1.  **Java Development Kit (JDK):** Android Studio requires a JDK. You can install it via your distribution's package manager (e.g., `sudo apt install openjdk-17-jdk`).
+2.  **Android Studio:** Download and install the latest version of Android Studio for Linux from the [official Android developer website](https://developer.android.com/studio).
 
-**This process also requires a paid Apple Developer Account ($99/year).** This is an unavoidable requirement from Apple to sign and install an app on a physical iPhone.
+### Step 2: Create the Android Studio Project
 
-### Step 1: Prerequisites on Linux
-
-1.  **Install Flutter:** Follow the official guide for your Linux distribution: [Flutter Linux Install Guide](https://docs.flutter.dev/get-started/install/linux).
-2.  **Install VS Code:** The recommended editor for Flutter development. Install it from its official website.
-3.  **Install Android Studio:** Even if you only target iOS, you need Android Studio for the Android SDK and for running an Android emulator for testing. [Install Android Studio for Linux](https://developer.android.com/studio).
-4.  **Run `flutter doctor`:** Open your terminal and run this command. It will tell you what components you are missing. Follow its instructions to install any missing dependencies.
-
-### Step 2: Create the Flutter Project
-
-1.  Open your terminal and navigate to the `Melora` repository.
-2.  Create the Flutter project in the `Frontend` directory:
-    ```bash
-    flutter create Frontend
-    ```
-3.  Open the `Frontend` folder in VS Code.
+1.  **Open Android Studio**.
+2.  Click on **"New Project"**.
+3.  Select the **"Empty Compose App"** template from the phone and tablet section. Click **Next**.
+4.  **Name:** `Melora`
+5.  **Package name:** `com.yourname.melora` (or similar)
+6.  **Save location:** Choose the `Frontend` directory in your project repository.
+7.  **Language:** Make sure **Kotlin** is selected.
+8.  **Minimum SDK:** Choose a reasonable API level (e.g., API 26 or higher).
+9.  Click **Finish**. Android Studio will create and build the project.
 
 ### Step 3: Add Dependencies
 
-1.  Open the `pubspec.yaml` file in the root of your new `Frontend` project.
-2.  Add the following lines under `dependencies`:
+1.  In your new project, open the `build.gradle.kts` file for the **app module** (usually `app/build.gradle.kts`).
+2.  Add the necessary libraries to the `dependencies` block. It will look something like this:
 
-    ```yaml
-    dependencies:
-      flutter: 
-        sdk: flutter
-      # Add these packages
-      http: ^1.2.1
-      html: ^0.15.4
-      youtube_explode_dart: ^2.2.0
-      hive: ^2.2.3
-      hive_flutter: ^1.1.0
-      path_provider: ^2.0.11
-      flutter_bloc: ^8.1.2 # For state management
+    ```kotlin
+    dependencies {
+        // Core Android & Compose dependencies (will be there already)
+        implementation("androidx.core:core-ktx:1.13.1")
+        implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
+        implementation("androidx.activity:activity-compose:1.9.0")
+        implementation(platform("androidx.compose:compose-bom:2024.05.00"))
+        // ... other compose dependencies
+
+        // Add these for our project
+        // Room for database
+        implementation("androidx.room:room-runtime:2.6.1")
+        ksp("androidx.room:room-compiler:2.6.1") // Annotation processor
+        implementation("androidx.room:room-ktx:2.6.1") // Kotlin extensions
+
+        // Networking and Scraping
+        implementation("com.squareup.okhttp3:okhttp:4.12.0")
+        implementation("org.jsoup:jsoup:1.17.2")
+
+        // YouTube Conversion (Example library)
+        implementation("com.github.yausername:youtubedl-android:0.1.8")
+    }
     ```
-3.  Add the following under `dev_dependencies` for code generation for Hive:
-    ```yaml
-    dev_dependencies:
-      flutter_test:
-        sdk: flutter
-      # Add these packages
-      hive_generator: ^2.0.0
-      build_runner: ^2.3.3
-    ```
-4.  Save the file. VS Code should automatically run `flutter pub get`. If not, run it in the terminal.
+3.  You will also need to add the KSP plugin for Room. In the project-level `build.gradle.kts`, and the app-level one, add the appropriate plugin declarations.
+4.  Click the **"Sync Now"** banner that appears in Android Studio to download and add the new dependencies.
 
-### Step 4: The iOS Build Process (Cloud Build)
+### Step 4: Run the App on Your Android Phone
 
-This is the final step once your app is developed and tested on Linux.
+1.  **Enable Developer Options** on your phone: Go to Settings > About phone, and tap on the "Build number" seven times.
+2.  **Enable USB Debugging:** In the new "Developer options" menu, find and enable "USB debugging".
+3.  **Connect your phone** to your Linux machine with a USB cable.
+4.  **Select your device:** In the top toolbar of Android Studio, you should see your phone appear in the device dropdown menu.
+5.  **Run the app:** Click the green **Run** button (a play icon). Android Studio will compile, install, and launch the app on your phone.
 
-1.  **Get a Paid Apple Developer Account:** Enroll at [developer.apple.com](https://developer.apple.com/).
-2.  **Push Your Code:** Make sure your entire project is pushed to a Git repository (e.g., GitHub, GitLab).
-3.  **Use a Cloud Build Service (Codemagic):**
-    -   **Sign up for Codemagic.io** with your Git provider account. They have a free tier that is sufficient for this.
-    -   **Add your application** and connect it to your Git repository.
-    -   **Configure Code Signing:** Codemagic has excellent documentation on how to set up iOS code signing. You will need to generate certificates and a provisioning profile from your Apple Developer account and upload them to Codemagic.
-    -   **Start the Build:** Configure a workflow to build the iOS version of your app.
-    -   **Download the `.ipa` file:** Once the build is complete, Codemagic will provide a downloadable `.ipa` file.
-4.  **Install the App on Your iPhone:**
-    -   The easiest way is to use **Apple TestFlight**. You can upload your `.ipa` file to App Store Connect (part of your developer account) and invite yourself as a tester. You can then download the app via the TestFlight app on your iPhone.
-
-This revised plan is a realistic path forward to achieving your goal from a Linux machine.
+This setup is fully self-contained on your Linux machine and provides a fast and efficient development workflow.

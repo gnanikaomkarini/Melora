@@ -1,12 +1,12 @@
-# Project: Melora - A Personal Music Player for iOS
+# Project: Melora - A Personal Music Player for Android
 
 ## 1. Vision & Purpose
 
-This project aims to develop a personal, ad-free music streaming application for iOS. The primary goal is educational: to gain hands-on experience in mobile application development, web scraping, building media conversion tools, and local database management. This application is intended strictly for personal use and will not be distributed.
+This project aims to develop a personal, ad-free music streaming application for Android. The primary goal is educational: to gain hands-on experience in **native Android development with Kotlin**, web scraping, building media conversion tools, and local database management. This application is intended strictly for personal use and will not be distributed.
 
 ## 2. Target Platform
 
-The application will be developed exclusively for the iOS platform, targeting a personal iPhone device.
+The application will be developed exclusively for the **Android platform**.
 
 ## 3. Core Features
 
@@ -14,22 +14,22 @@ The application will implement the following key features to provide a robust mu
 
 ### 3.1. Audio Playback & System Integration
 
--   **Background Audio:** The app will continue to play audio when it is in the background or when the device is locked.
--   **Lock Screen & Control Center Integration:** Users will be able to control music playback (play, pause, skip forward/backward) directly from the iOS lock screen and Control Center. Album art and track information should also be visible.
+-   **Background Audio Service:** The app will use a foreground service to continue playing audio when it is in the background or when the device is locked.
+-   **MediaStyle Notifications:** Users will be able to control music playback (play, pause, skip) directly from a media-style notification and the device lock screen.
 -   **Standard Playback Controls:** The UI will feature standard controls including a play/pause button, next and previous track buttons, and a seekable progress bar.
 
 ### 3.2. Music Sourcing & Processing
 
 -   **Web Scraping for Music:** When a user searches for a song, the application will perform a web search to find a corresponding YouTube video link.
--   **Local YouTube to MP3 Conversion:** The application will include a custom-built, local tool to convert the audio from the scraped YouTube link into an MP3 file.
--   **On-Demand Downloading & Caching:** When a user plays a song for the first time, the application will perform the scrape and conversion, then save the resulting MP3 file and its associated metadata (title, artist, album, album art - which may need to be scraped separately or manually entered).
--   **Local Database:** The downloaded metadata will be stored in a local on-device database. The converted MP3 file will be stored in the app's local file storage.
--   **Offline Availability:** Once a song is converted and saved, it will be available for offline playback, with all data being fetched from the local database and storage.
+-   **On-Device YouTube to MP3 Conversion:** The application will include a bundled, local library to convert the audio from the scraped YouTube link into an MP3 file.
+-   **On-Demand Downloading & Caching:** When a user plays a song for the first time, the application will perform the scrape and conversion, then save the resulting MP3 file and its associated metadata.
+-   **Local Database:** The downloaded metadata will be stored in a local on-device database.
+-   **Offline Availability:** Once a song is converted and saved, it will be available for offline playback.
 
 ### 3.3. Playlist Management
 
 -   **Create & Manage Playlists:** Users can create new playlists, give them custom names, and delete them.
--   **Add & Remove Songs:** Users will be able to add any song (once saved locally) to one or more playlists. They will also be able to remove songs from a playlist.
+-   **Add & Remove Songs:** Users will be able to add any song (once saved locally) to one or more playlists.
 -   **View Playlists:** A dedicated section of the app will display all created playlists and the songs within them.
 
 ### 3.4. Search Functionality
@@ -41,8 +41,8 @@ The application will implement the following key features to provide a robust mu
 
 -   **Spotify-like Design:** The user interface will closely mimic the look and feel of the official Spotify application.
 -   **Dark Theme:** The application will feature a dark theme as its primary and only interface style.
--   **Now Playing View:** A visually appealing screen that displays the current track's information (album art, title, artist), playback controls, and progress.
--   **Tab-based Navigation:** A simple navigation structure (e.g., Home, Search, Your Library) to allow for easy discovery and access to features.
+-   **Now Playing View:** A visually appealing screen that displays the current track's information, playback controls, and progress.
+-   **Tab-based Navigation:** A simple navigation structure (e.g., Home, Search, Your Library).
 
 ## 5. Future Enhancements (Optional)
 
