@@ -1,1 +1,4 @@
-We will not be using spotify, we will do a web search and scrape such that we get the link to a youtube video of the song, and locally have a youtube to mp3 converter(built by us) to convert it 
+I do not have a Macbook, I only have linux running
+
+I want to be able to use the app entirely from my phone and not have to start the terminal here(at the end of the project)
+
