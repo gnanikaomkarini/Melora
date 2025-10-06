@@ -37,11 +37,12 @@ The primary goal is to build a personal, ad-free music player application for An
 
 ---
 
-### **NEXT ACTION REQUIRED**
+### **Next Steps: Implement Search Functionality**
 
-**The user needs to create the initial Android project structure.**
+The next phase is to implement the core search feature. This involves the following steps:
 
-1.  **Open Android Studio**.
-2.  Select **"New Project"** -> **"Empty Compose App"**.
-3.  Set the **"Save location"** to the project root: `/home/gnanika/Downloads/Melora`.
-4.  **After the project is created, notify me.** I will then proceed with configuring the Gradle files to add all the necessary dependencies.
+1.  **Implement `YoutubeService`:** This service will be responsible for scraping YouTube to find relevant song links based on the user's search query.
+2.  **Implement `SongRepository`:** This repository will act as the single source of truth for song data, fetching search results from the `YoutubeService`.
+3.  **Implement `SearchSongUseCase`:** This use case will contain the business logic for performing a song search, utilizing the `SongRepository`.
+4.  **Update `SearchViewModel`:** The ViewModel will execute the `SearchSongUseCase` and expose the stream of search results to the `SearchScreen` for display.
+
